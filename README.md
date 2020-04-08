@@ -1,5 +1,5 @@
 # EV3R_SCAN
-EV3RSTORM program with just object detection and scanning motor heads using threads
+EV3RSTORM program with just object detection and scanning motor heads using threads.
 Sensor ports are listed in main.py and head motors use Ports A and D.
 Motors need a hard stop between 50 and 90 degrees from the front direction.
 Stop direction can be on either side and is configured in the main.py file.
