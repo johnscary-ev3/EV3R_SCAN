@@ -145,6 +145,7 @@ butt_len1 = 0
 butt_len2 = 0
 butt_len3 = 0
 butt_len4 = 0
+direction = 0
 
 while main_loop ==True:
     
@@ -189,6 +190,33 @@ while main_loop ==True:
     if Button.BEACON in buttons  :
         main_loop =False
 
+    # Check for button press on Chan 4 and execute Move commands
+    chan = 4
+    buttons = ir.buttons(chan)
+    butt_len4 =len(buttons)
+ 
+    # Use Beacon on Chan 4 to play directions sounds
+    if Button.BEACON in buttons  :
+        if direction > 10:
+            direction =0
+        motion_tools.direction_sound(direction,True)
+        direction = direction +1
+
+    #start motor logging
+
+    if Button.LEFT_UP in buttons:
+        time_seconds = 10
+        fileA ="logA.txt"
+        fileD ="logD.txt"
+        sound_tools.play_file(SoundFile.START)
+        motion_tools.start_log_motorA(time_seconds)
+        motion_tools.start_log_motorD(time_seconds)
+        wait(1.5*1000*time_seconds)
+        motion_tools.save_log_motorA(fileA)
+        motion_tools.save_log_motorD(fileD)
+        sound_tools.play_file(SoundFile.STOP)
+
+    
 
     wait(10)
     
