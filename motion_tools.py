@@ -214,6 +214,17 @@ def start_scan_head_thread():
     t_scan_head_thread = Thread(target=scan_head_thread)
     t_scan_head_thread.start()
 
+#motor data logging
+def start_log_motorA(time_seconds):
+    motorA.log.start(1000*time_seconds)
 
+def start_log_motorD(time_seconds):
+    motorD.log.start(1000*time_seconds)
+       
+def save_log_motorA(file):
+    motorA.log.save(file)
+
+def save_log_motorD(file):
+    motorD.log.save(file)
 
 
