@@ -136,6 +136,20 @@ if UseScanHeadObjectDetect:
         motion_tools.scan_head_speed = head_speed
         motion_tools.start_scan_head_thread()
 
+#start motor logging
+log_time_seconds = 60
+fileA ="logA.txt"
+fileD ="logD.txt"
+sound_tools.play_file(SoundFile.START)
+if ScanHeadPresent:
+    motion_tools.start_log_motorA(log_time_seconds)    
+if ScanHeadPresent_2:
+    motion_tools.start_log_motorD(log_time_seconds)
+
+# Setup a Stop Watch
+sw = StopWatch()
+sw.reset()
+
 # Main loop 
 # Will exit based on Exit Button
 
@@ -202,20 +216,27 @@ while main_loop ==True:
         motion_tools.direction_sound(direction,True)
         direction = direction +1
 
-    #start motor logging
-
-    if Button.LEFT_UP in buttons:
-        time_seconds = 10
-        fileA ="logA.txt"
-        fileD ="logD.txt"
-        sound_tools.play_file(SoundFile.START)
-        motion_tools.start_log_motorA(time_seconds)
-        motion_tools.start_log_motorD(time_seconds)
-        wait(1.5*1000*time_seconds)
-        motion_tools.save_log_motorA(fileA)
-        motion_tools.save_log_motorD(fileD)
+    # save motor log file based on log time and timer
+    if sw.time() > (log_time_seconds + 5) * 1000:
         sound_tools.play_file(SoundFile.STOP)
+        if ScanHeadPresent:
+            motion_tools.save_log_motorA(fileA)    
+        if ScanHeadPresent_2:
+            motion_tools.save_log_motorD(fileD)
 
+        #Restart log 
+        sound_tools.play_file(SoundFile.START)
+        if ScanHeadPresent:
+            motion_tools.start_log_motorA(log_time_seconds)    
+        if ScanHeadPresent_2:
+            motion_tools.start_log_motorD(log_time_seconds)
+
+        # Reset Stop Watch
+        sw.reset()
+
+    #Stop using LEFT_UP button on chan4
+    if  Button.LEFT_UP in buttons :
+        main_loop =False
     
 
     wait(10)
