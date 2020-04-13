@@ -218,6 +218,10 @@ while main_loop ==True:
 
     # save motor log file based on log time and timer
     if sw.time() > (log_time_seconds + 5) * 1000:
+        #Stop the scanning motors and object detect
+        motion_tools.scan_head_loop_run =False
+        object_tools.object_detect_run =False
+        
         sound_tools.play_file(SoundFile.STOP)
         if ScanHeadPresent:
             motion_tools.save_log_motorA(fileA)    
@@ -230,6 +234,10 @@ while main_loop ==True:
             motion_tools.start_log_motorA(log_time_seconds)    
         if ScanHeadPresent_2:
             motion_tools.start_log_motorD(log_time_seconds)
+
+        #Start the scanning motors again and object detect
+        motion_tools.scan_head_loop_run =True
+        object_tools.object_detect_run =True
 
         # Reset Stop Watch
         sw.reset()

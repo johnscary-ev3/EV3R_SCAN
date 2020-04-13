@@ -16,6 +16,7 @@ import object_tools
 
 #Variables
 scan_head_loop = True
+scan_head_loop_run = True
 scan_head_move = False
 scan_head_move_2 = False
 
@@ -60,11 +61,13 @@ def init_scan_head_2(head_speed,homedirection,homeoffset):
 
 # Move Scan Head with Target Angle
 def move_scan_head_target(head_speed, target_angle, wait = True):
-    motorA.run_target(head_speed, target_angle, Stop.COAST, wait)
+    #motorA.run_target(head_speed, target_angle, Stop.COAST, wait)
+    motorA.run_target(head_speed, target_angle, Stop.HOLD, wait)
 
 #Move Scan Head with Target Angle
 def move_scan_head_target_2(head_speed, target_angle, wait = True):
-    motorD.run_target(head_speed, target_angle, Stop.COAST, wait)
+    #motorD.run_target(head_speed, target_angle, Stop.COAST, wait)
+    motorD.run_target(head_speed, target_angle, Stop.HOLD, wait)
 
 # Home Scan Head to zero dg
 def home_scan_head():
@@ -108,6 +111,7 @@ def direction_sound(direction,GoSound = True):
 #Set up scan head thread
 def scan_head_thread():
     global scan_head_loop
+    global scan_head_loop_run
     global scan_head_move
     global scan_head_move_2
     global scan_head_speed
@@ -121,93 +125,21 @@ def scan_head_thread():
             move_wait_1 = True
         move_wait_2 = True
 
-        #Use Lock/Release of the Sonic sensor thread flag
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.acquire()
-        if scan_head_move and scan_head_loop:
-            move_scan_head_target(scan_head_speed,-25, move_wait_1)
-        if scan_head_move_2 and scan_head_loop:
-            move_scan_head_target_2(scan_head_speed,-25, move_wait_2)
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.release()
-            wait(scan_head_wait)
+        # Go throught angles
+        for target_angle in [-25,-50,-25,0,25,50,25,0]:
+            #Use Lock/Release of the Sonic sensor thread flag
+            if scan_head_loop and scan_head_loop_run:
+                object_tools.sonic_sensor_lock.acquire()
+                if scan_head_move :
+                    move_scan_head_target(scan_head_speed,target_angle, move_wait_1)
+                if scan_head_move_2 :
+                    move_scan_head_target_2(scan_head_speed,target_angle, move_wait_2)
+                object_tools.sonic_sensor_lock.release()
+                wait(scan_head_wait)
+            else:         
+                #Wait a bit
+                wait(100)
 
-        #Use Lock/Release of the Sonic sensor thread flag
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.acquire()
-        if scan_head_move and scan_head_loop:
-            move_scan_head_target(scan_head_speed,-50, move_wait_1)
-        if scan_head_move_2 and scan_head_loop:
-            move_scan_head_target_2(scan_head_speed,-50, move_wait_2)
-        if scan_head_loop:    
-            object_tools.sonic_sensor_lock.release()
-            wait(scan_head_wait)
-
-        #Use Lock/Release of the Sonic sensor thread flag
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.acquire()
-        if scan_head_move and scan_head_loop:
-            move_scan_head_target(scan_head_speed,-25, move_wait_1)
-        if scan_head_move_2 and scan_head_loop:
-            move_scan_head_target_2(scan_head_speed,-25, move_wait_2)
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.release()
-            wait(scan_head_wait)
-
-        #Use Lock/Release of the Sonic sensor thread flag
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.acquire()
-        if scan_head_move and scan_head_loop:
-            move_scan_head_target(scan_head_speed,  0, move_wait_1)
-        if scan_head_move_2 and scan_head_loop:
-            move_scan_head_target_2(scan_head_speed,  0, move_wait_2)
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.release()
-            wait(scan_head_wait)
-
-         #Use Lock/Release of the Sonic sensor thread flag
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.acquire()
-        if scan_head_move and scan_head_loop:
-            move_scan_head_target(scan_head_speed, 25, move_wait_1)
-        if scan_head_move_2 and scan_head_loop:
-            move_scan_head_target_2(scan_head_speed, 25, move_wait_2)
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.release()
-            wait(scan_head_wait)
-
-        #Use Lock/Release of the Sonic sensor thread flag
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.acquire()
-        if scan_head_move and scan_head_loop:
-            move_scan_head_target(scan_head_speed, 50, move_wait_1)
-        if scan_head_move_2 and scan_head_loop:
-            move_scan_head_target_2(scan_head_speed, 50, move_wait_2)
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.release()
-            wait(scan_head_wait)
-
-        #Use Lock/Release of the Sonic sensor thread flag
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.acquire()
-        if scan_head_move and scan_head_loop:
-            move_scan_head_target(scan_head_speed, 25, move_wait_1)
-        if scan_head_move_2 and scan_head_loop:
-            move_scan_head_target_2(scan_head_speed, 25, move_wait_2)
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.release()
-            wait(scan_head_wait)
-
-        #Use Lock/Release of the Sonic sensor thread flag
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.acquire()
-        if scan_head_move and scan_head_loop:
-            move_scan_head_target(scan_head_speed,  0, move_wait_1)  
-        if scan_head_move_2 and scan_head_loop:
-            move_scan_head_target_2(scan_head_speed,  0, move_wait_2)
-        if scan_head_loop:
-            object_tools.sonic_sensor_lock.release()    
-            wait(scan_head_wait)
 
 #Start scan head thread
 def start_scan_head_thread():
